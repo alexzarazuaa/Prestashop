@@ -1,0 +1,47 @@
+version: '3'
+services:
+  db:
+    image: mysql:5.7
+    container_name: db_container
+    environment:
+     - MYSQL_ROOT_PASSWORD=admin
+     - MYSQL_DATABASE=prestashop
+    ports:
+     - "3307:3306"
+    networks:
+     - presta-net
+  prestashop:
+    image: prestashop/prestashop:1.7
+    container_name: presta_container
+    environment:
+     - DB_SERVER=db_container
+    ports:
+     - "8090:80"
+    depends_on:
+     - db
+    links:
+     - db  
+    networks:
+     - presta-net
+  phpmyadmin: 
+    image: phpmyadmin
+    container_name: phpmyadmin
+    environment:
+     - PMA_ARBITRARY=1
+    restart: always
+    ports:
+     - 9200:80
+    depends_on:
+     - db
+    links:
+     - db  
+    networks:
+     - presta-net
+    volumes:
+     - /sessions
+   
+    
+
+
+networks:
+  presta-net:
